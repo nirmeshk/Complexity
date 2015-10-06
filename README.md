@@ -12,7 +12,7 @@ The repository contains a stub that parses a javascript file and visits each fun
 
 - [x] **ParameterCount**: The number of parameters for functions
 - [x] **SimpleCyclomaticComplexity**: The number of if statements/loops + 1
-- [ ] **MaxNestingDepth**: The max depth of scopes (nested ifs, loops, etc)
+- [x] **MaxNestingDepth**: The max depth of scopes (nested ifs, loops, etc)
 - [ ] **MaxConditions**: The max number of conditions in one statement.
 
 For live example of a code complexity calculator, see [jscomplexity](http://jscomplexity.org/).

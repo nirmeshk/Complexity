@@ -101,7 +101,7 @@ function complexity(filePath)
 	traverse(ast, function (node) 
 	{   
 		if (node.type === 'FunctionDeclaration') 
-		{
+        {
 			var builder = new ComplexityBuilder();
 			builder.FunctionName = functionName(node);
             func_name = builder.FunctionName;
@@ -109,13 +109,70 @@ function complexity(filePath)
             builder.ParameterCount = node.params.length;
             //Find number of if statements inside the function
 			builders[builder.FunctionName] = builder;
-            var depth = 0;
-		} if(node.type === 'ForInStatement' | node.type === 'ForStatement' 
-            | node.type === 'IfStatement' | node.type === 'WhileStatement' 
-            | node.type === 'DoWhileStatement'){
+            visitDepth(node, 0, builders[func_name]);
+		} if(isDecision(node))
+        {
             builders[func_name].SimpleCyclomaticComplexity++;
         }
 	});
+}
+
+function visitDepth(node,depth,result)
+{
+    var key, child;
+    var children = 0;
+    for (key in node) 
+    {
+        if (node.hasOwnProperty(key)) 
+        {
+            child = node[key];
+            if (typeof child === 'object' && child !== null && key != 'parent') 
+            {
+                children++;
+                // Don't double count else/else if
+                if( key == "alternate" )
+                {
+                    visitDepth(child,depth,result)
+                }
+                else if( isDecision(child) )
+                {
+                    visitDepth(child, depth+1, result);
+                }
+                else
+                {
+                    visitDepth(child, depth, result);
+                }
+            }
+        }
+    }
+
+    if( children == 0 )
+    {
+        if( result.MaxNestingDepth < depth )
+        {
+            result.MaxNestingDepth = depth;
+        }
+    }
+}
+
+function isDecision(node)
+{
+    if( node.type == 'IfStatement' )
+    {
+        // Don't double count else/else if
+        if( node.parent && node.parent.type == 'IfStatement' && node.parent["alternate"] )
+        {
+            return false;
+        }
+        return true;
+    }
+
+    if( node.type == 'ForStatement' || node.type == 'WhileStatement' ||
+         node.type == 'ForInStatement' || node.type == 'DoWhileStatement')
+    {
+        return true;
+    }
+    return false;
 }
 
 // Helper function for printing out function name.
@@ -143,6 +200,7 @@ if (!String.prototype.format) {
 
 main();
 
+// Dummy function for testing the complexity. Don not try to understand what it is doing.!
 function Crazy (argument) 
 {
 
