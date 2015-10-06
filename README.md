@@ -10,10 +10,10 @@ Two design patterns are of importance here:
 
 The repository contains a stub that parses a javascript file and visits each function. However, we need to calculate the following properties:
 
-* **ParameterCount**: The number of parameters for functions
-* **SimpleCyclomaticComplexity**: The number of if statements/loops + 1
-* **MaxNestingDepth**: The max depth of scopes (nested ifs, loops, etc)
-* **MaxConditions**: The max number of conditions in one statement.
+- [x]**ParameterCount**: The number of parameters for functions
+- [x]**SimpleCyclomaticComplexity**: The number of if statements/loops + 1
+- [ ]**MaxNestingDepth**: The max depth of scopes (nested ifs, loops, etc)
+- [ ]**MaxConditions**: The max number of conditions in one statement.
 
 For live example of a code complexity calculator, see [jscomplexity](http://jscomplexity.org/).
 

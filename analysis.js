@@ -51,7 +51,7 @@ function ComplexityBuilder()
 				"Parameters: {5}\n\n"
 			)
 			.format(this.FunctionName, this.StartLine,
-				     this.SimpleCyclomaticComplexity, this.MaxNestingDepth,
+				     this.SimpleCyclomaticComplexity + 1, this.MaxNestingDepth,
 			        this.MaxConditions, this.ParameterCount)
 		);
 	}
@@ -63,6 +63,7 @@ function traverse(object, visitor)
     var key, child;
 
     visitor.call(null, object);
+
     for (key in object) {
         if (object.hasOwnProperty(key)) {
             child = object[key];
@@ -95,22 +96,26 @@ function complexity(filePath)
 {
 	var buf = fs.readFileSync(filePath, "utf8");
 	var ast = esprima.parse(buf, options);
-
-	var i = 0;
+    var func_name = '';
 	// Tranverse program with a function visitor.
 	traverse(ast, function (node) 
-	{
+	{   
 		if (node.type === 'FunctionDeclaration') 
 		{
 			var builder = new ComplexityBuilder();
-
 			builder.FunctionName = functionName(node);
+            func_name = builder.FunctionName;
 			builder.StartLine    = node.loc.start.line;
-
+            builder.ParameterCount = node.params.length;
+            //Find number of if statements inside the function
 			builders[builder.FunctionName] = builder;
-		}
+            var depth = 0;
+		} if(node.type === 'ForInStatement' | node.type === 'ForStatement' 
+            | node.type === 'IfStatement' | node.type === 'WhileStatement' 
+            | node.type === 'DoWhileStatement'){
+            builders[func_name].SimpleCyclomaticComplexity++;
+        }
 	});
-
 }
 
 // Helper function for printing out function name.
